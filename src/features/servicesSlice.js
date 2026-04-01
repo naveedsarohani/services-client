@@ -1,93 +1,83 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../config/axiosConfig";
-import toast from "react-hot-toast";
-
 
 export const fetchServices = createAsyncThunk(
   "services/fetch",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.get("/services");
-      return response.data; 
+      return (await axiosInstance.get("/services")).data;
     } catch (err) {
-     
       return rejectWithValue(err.response?.data || err.message);
     }
   }
 );
-
 
 export const connectService = createAsyncThunk(
   "services/connect",
   async ({ service }, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post("/services/connect", { service });
-      return { service, data: response.data };
+      return (await axiosInstance.post("/services/connect", { service })).data;
     } catch (err) {
-     
       return rejectWithValue(err.response?.data || err.message);
     }
   }
 );
-
 
 export const disconnectService = createAsyncThunk(
   "services/disconnect",
   async ({ service }, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post("/services/disconnect", { service });
-      return { service, data: response.data };
+      return (await axiosInstance.post("/services/disconnect", { service })).data;
     } catch (err) {
-     
       return rejectWithValue(err.response?.data || err.message);
     }
   }
 );
 
+
 const servicesSlice = createSlice({
   name: "services",
   initialState: {
-    services: {},
-    loadingServices: {},
+    services: [],
+    loading: null
   },
   reducers: {},
   extraReducers: (builder) => {
- 
+    // fetchServices
     builder.addCase(fetchServices.fulfilled, (state, action) => {
-      state.services = action.payload;
-     
+      state.services = action.payload.services;
     });
 
+    // connectService
     builder.addCase(connectService.pending, (state, action) => {
-      state.loadingServices[action.meta.arg.service] = true;
+      const service = action.meta.arg.service;
+      state.loading = service;
+
+      const item = state.services.find(s => s.name === service);
+      if (item) item.is_connected = true;
     });
     builder.addCase(connectService.fulfilled, (state, action) => {
-      const { service, data } = action.payload;
-      state.loadingServices[service] = false;
-      if (data.services) {
-        state.services = { ...state.services, ...data.services };
-      }
-      toast.success(data.message || `${service} connected successfully`);
+      state.loading = null;
+      state.services = action.payload.services;
     });
     builder.addCase(connectService.rejected, (state, action) => {
-      state.loadingServices[action.meta.arg.service] = false;
-      toast.error(action.payload?.message || `Failed to connect ${action.meta.arg.service}`);
+      state.loading = null;
     });
 
+    // disconnectService
     builder.addCase(disconnectService.pending, (state, action) => {
-      state.loadingServices[action.meta.arg.service] = true;
+      const service = action.meta.arg.service;
+      state.loading = service;
+
+      const item = state.services.find(s => s.name === service);
+      if (item) item.is_connected = false;
     });
     builder.addCase(disconnectService.fulfilled, (state, action) => {
-      const { service, data } = action.payload;
-      state.loadingServices[service] = false;
-      if (data.services) {
-        state.services = { ...state.services, ...data.services };
-      }
-      toast.info(data.message || `${service} disconnected`);
+      state.loading = null;
+      state.services = action.payload.services;
     });
     builder.addCase(disconnectService.rejected, (state, action) => {
-      state.loadingServices[action.meta.arg.service] = false;
-      toast.error(action.payload?.message || `Failed to disconnect ${action.meta.arg.service}`);
+      state.loading = null;
     });
   },
 });

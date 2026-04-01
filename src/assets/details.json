@@ -1,0 +1,42 @@
+{
+  "aws": {
+    "name": "aws",
+    "description": "Pull security findings from AWS Security Hub",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-original-wordmark.svg"
+  },
+  "azure": {
+    "name": "azure",
+    "description": "Connect Azure Security Center for compliance mapping",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/azure/azure-original.svg"
+  },
+  "gcp": {
+    "name": "gcp",
+    "description": "Stream GCP Security Command Center alerts",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/googlecloud/googlecloud-original.svg"
+  },
+  "cloudflare": {
+    "name": "cloudflare",
+    "description": "Monitor DNS, WAF, and CDN configurations",
+    "icon": "https://www.vectorlogo.zone/logos/cloudflare/cloudflare-icon.svg"
+  },
+  "slack": {
+    "name": "slack",
+    "description": "Send real-time alerts to Slack",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/slack/slack-original.svg"
+  },
+  "jira": {
+    "name": "jira",
+    "description": "Create issues directly from Guardian Gaze findings",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/jira/jira-original.svg"
+  },
+  "teams": {
+    "name": "teams",
+    "description": "Stream GCP Security Command Center alerts",
+    "icon": "https://www.svgrepo.com/show/303180/microsoft-teams-logo.svg"
+  },
+  "microsoft": {
+    "name": "microsoft",
+    "description": "Monitor DNS, WAF, and CDN configurations",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/windows8/windows8-original.svg"
+  }
+}

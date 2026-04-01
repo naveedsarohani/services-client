@@ -1,45 +1,24 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Grid from "../components/app/Grid";
 import SearchBar from "../components/app/SearchBar";
-import {
-  fetchServices,
-  connectService,
-  disconnectService,
-} from "../features/servicesSlice";
-import { initialData } from "../components/data/initialData";
+import { fetchServices, connectService, disconnectService } from "../features/servicesSlice";
+import details from "../assets/details.json";
+import Card from "../components/app/Card";
 
 const Home = () => {
   const dispatch = useDispatch();
-  const { services, loadingServices } = useSelector((state) => state.services);
+  const { services, loading } = useSelector((state) => state.services);
   const [search, setSearch] = useState("");
 
+  // Only fetch once on mount
   useEffect(() => {
     dispatch(fetchServices());
   }, [dispatch]);
 
-  const mergedData = initialData.map((item) => {
-    const backend = services[item.name.toLowerCase()] || {};
-    return {
-      ...item,
-      is_connected: backend.is_connected ?? false,
-    };
-  });
-
-  const handleToggle = (serviceKey) => {
-    const service = mergedData.find((s) => s.name.toLowerCase() === serviceKey);
-    if (!service) return;
-
-    if (service.is_connected) {
-      dispatch(disconnectService({ service: serviceKey }));
-    } else {
-      dispatch(connectService({ service: serviceKey }));
-    }
+  const handleConnectDisconnect = (service, isConnected) => {
+    if (isConnected) dispatch(disconnectService({ service }));
+    else dispatch(connectService({ service }));
   };
-
-  const filteredData = mergedData.filter((item) =>
-    item.name.toLowerCase().includes(search.toLowerCase())
-  );
 
   return (
     <div className="p-6">
@@ -49,11 +28,20 @@ const Home = () => {
           <SearchBar search={search} setSearch={setSearch} />
         </div>
 
-        <Grid
-          initialData={filteredData}
-          handleToggle={handleToggle}
-          loadingServices={loadingServices}
-        />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {services.map((item) => (
+            <Card
+              key={item.name}
+              icon={details[item.name]?.icon}
+              name={item.name}
+              status={item.is_connected ? "connected" : "disconnected"}
+              description={details[item.name]?.description}
+              checked={item.is_connected}
+              onChange={() => handleConnectDisconnect(item.name, item.is_connected)}
+              isLoading={loading === item.name}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

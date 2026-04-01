@@ -1,50 +1,49 @@
 import React from "react";
 
-const Card = ({ children }) => {
-  return <div className="card p-4 border rounded shadow-sm">{children}</div>;
-};
-
-const Header = ({ icon, name, status }) => {
+const Card = ({ icon, name, status, description, checked, onChange, isLoading }) => {
   return (
-    <div className="card-header flex items-center justify-between mb-2">
-      <div className="card-title flex items-center gap-2">
-        <img src={icon} alt={name} className="w-8 h-8" />
-        <h3 className="font-medium">{name}</h3>
+    <div
+      className={`card p-4 border rounded shadow-sm relative transition ${isLoading ? "opacity-50 pointer-events-none" : ""
+        }`}
+    >
+
+      {/* Loader Overlay */}
+      {isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-white/60 rounded">
+          <span className="text-sm font-medium">Processing...</span>
+        </div>
+      )}
+
+      {/* Header */}
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-2">
+          <img src={icon} alt={name} className="w-8 h-8" />
+          <h3 className="font-medium capitalize">{name}</h3>
+        </div>
+
+        <span className={`${status === "connected" ? "text-green-600" : "text-red-600"} -mt-7 text-xs`}>
+          ● {status === "connected" ? "Connected" : "Disconnected"}
+        </span>
       </div>
 
-      <span
-        className={`${
-          status === "connected" ? "text-green-600" : "text-red-600"
-        } font-semibold`}
-      >
-        ● {status === "connected" ? "Connected" : "Disconnected"}
-      </span>
+      {/* Body */}
+      <p className="text-gray-600 text-xs">{description}</p>
+
+      {/* Footer */}
+      <div className="mt-2 text-xs">
+        <label className="flex items-center gap-2 text-sm text-gray-600 text-xs">
+          <input
+            type="checkbox"
+            checked={checked}
+            onChange={onChange}
+            disabled={isLoading}
+            className="connect-checkbox"
+          />
+          {isLoading ? "Processing..." : "Connect"}
+        </label>
+      </div>
     </div>
   );
 };
-
-const Body = ({ description }) => {
-  return <p className="text-gray-600 text-sm">{description}</p>;
-};
-
-const Footer = ({ checked, onChange }) => {
-  return (
-    <div className="card-footer mt-2">
-      <label className="flex items-center gap-2 text-sm text-gray-600">
-        <input
-          type="checkbox"
-          checked={checked}
-          onChange={onChange}
-          className="connect-checkbox"
-        />
-        Connect
-      </label>
-    </div>
-  );
-};
-
-Card.Header = Header;
-Card.Body = Body;
-Card.Footer = Footer;
 
 export default Card;
