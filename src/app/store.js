@@ -1,14 +1,9 @@
+import { configureStore } from '@reduxjs/toolkit';
+import   servicesReducer from '../features/servicesSlice';
 
-import { configureStore } from "@reduxjs/toolkit";
-
-const store = configureStore({
-    reducer: {
-       
-    },
-
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware({
-        serializableCheck: false,
-    }),
+ const store = configureStore({
+  reducer: {
+    services:  servicesReducer,
+  },
 });
-
 export default store;
