@@ -7,35 +7,39 @@ import {
   connectService,
   disconnectService,
 } from "../features/servicesSlice";
+import { initialData } from "../components/data/initialData";
 
 const Home = () => {
   const dispatch = useDispatch();
   const { services, loadingServices } = useSelector((state) => state.services);
   const [search, setSearch] = useState("");
 
- 
   useEffect(() => {
     dispatch(fetchServices());
   }, [dispatch]);
 
+  const mergedData = initialData.map((item) => {
+    const backend = services[item.name.toLowerCase()] || {};
+    return {
+      ...item,
+      is_connected: backend.is_connected ?? false,
+    };
+  });
 
-  const handleToggle = (serviceName) => {
-    const isConnected = services[serviceName]?.is_connected;
-    if (isConnected) {
-      dispatch(disconnectService(serviceName));
+  const handleToggle = (serviceKey) => {
+    const service = mergedData.find((s) => s.name.toLowerCase() === serviceKey);
+    if (!service) return;
+
+    if (service.is_connected) {
+      dispatch(disconnectService({ service: serviceKey }));
     } else {
-      dispatch(connectService({ service: serviceName, config: {} }));
+      dispatch(connectService({ service: serviceKey }));
     }
   };
 
- 
-  const filtered = Object.entries(services)
-    .filter(([name]) => name.toLowerCase().includes(search.toLowerCase()))
-    .map(([name, data], index) => ({
-      id: index + 1, 
-      name,
-      ...data,
-    }));
+  const filteredData = mergedData.filter((item) =>
+    item.name.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <div className="p-6">
@@ -46,7 +50,7 @@ const Home = () => {
         </div>
 
         <Grid
-          data={filtered}
+          initialData={filteredData}
           handleToggle={handleToggle}
           loadingServices={loadingServices}
         />
